@@ -37,3 +37,10 @@ export { SessionManager, sessions } from './utils/session.js';
 
 // Actions
 export { executeActions } from './utils/actions.js';
+
+// Auth modules
+export { microsoftLogin } from './auth/microsoft.js';
+export type { MicrosoftCredentials, MicrosoftLoginResult } from './auth/microsoft.js';
+
+// Pre-authenticated scrapers
+export { MicrosoftScraper } from './scrapers/microsoft.js';

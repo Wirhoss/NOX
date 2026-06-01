@@ -1,0 +1,43 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Wirhoss/NOX/main/schemas/nox-config.json",
+  "browser": {
+    "headless": false
+  },
+  "jobs": [
+    {
+      "name": "m365-copilot",
+      "urls": ["https://m365.cloud.microsoft/chat"],
+      "session": {
+        "load": "ufide-ms",
+        "save": "ufide-ms",
+        "loginUrl": "https://login.microsoftonline.com",
+        "login": [
+          {
+            "type": "type",
+            "selector": "input[type=\"email\"]",
+            "value": "${MS_EMAIL}"
+          },
+          { "type": "click", "selector": "input[type=\"submit\"]", "delay": 2000 },
+          {
+            "type": "type",
+            "selector": "input[type=\"password\"]",
+            "value": "${MS_PASSWORD}"
+          },
+          { "type": "click", "selector": "input[type=\"submit\"]", "delay": 3000 }
+        ]
+      },
+      "selectors": [
+        {
+          "name": "page-title",
+          "selector": "h1",
+          "extract": "text"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "dir": "./output",
+    "format": "json",
+    "pretty": true
+  }
+}

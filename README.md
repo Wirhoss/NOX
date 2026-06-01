@@ -22,6 +22,8 @@ bun run scrape --config examples/hackernews.nox.json
 - **JSON-driven**: define scrape jobs declaratively (URLs, selectors, actions)
 - **Joi validation**: config files are validated at load time with clear error messages
 - **Remote browsers**: connect to browserless, CDP endpoints, or any WebSocket browser
+- **Session management**: persist cookies/localStorage across runs (login once, scrape forever)
+- **Microsoft auth**: built-in handler for Microsoft Online / Azure AD login flows
 - **Bun-native**: TypeScript runs directly, no transpilation step needed
 
 ## Project Structure
@@ -33,17 +35,25 @@ src/
 ├── config/
 │   ├── schema.ts         # Joi schemas + TypeScript types
 │   └── loader.ts         # Load & validate .nox.json files
+├── auth/
+│   ├── index.ts          # Auth module barrel
+│   └── microsoft.ts      # MS Online / Azure AD login handler
 ├── scrapers/
-│   └── base.ts           # BaseScraper — extend this
+│   ├── base.ts           # BaseScraper — extend this
+│   └── microsoft.ts      # MicrosoftScraper — auto-auth + scrape
 ├── types/
 │   └── index.ts          # Shared type definitions
 └── utils/
     ├── browser.ts        # Browser lifecycle (local + remote)
+    ├── session.ts        # Session manager (save/load cookies)
+    ├── actions.ts        # Action executor (click, type, wait...)
     └── logger.ts         # Timestamped logger
 
 examples/
-├── hackernews.nox.json   # Scrape HN titles & links
-└── remote-browser.nox.json  # Remote browser (browserless) config
+├── hackernews.nox.json          # Basic scraping
+├── remote-browser.nox.json      # Remote browser (browserless)
+├── login-session.nox.json       # Generic login + session persistence
+└── microsoft-teams.nox.json     # Microsoft-authenticated scraping
 ```
 
 ## Config File Format
@@ -115,6 +125,66 @@ Create a `.nox.json` file:
 | `scroll` | Scroll the page |
 | `screenshot` | Take a screenshot |
 | `evaluate` | Run JS in page context |
+
+## Microsoft Online Login
+
+NOX includes a reusable handler for Microsoft Online (Azure AD / O365) login flows — including federated SSO (common in universities).
+
+### Standalone function
+
+```ts
+import { microsoftLogin } from 'nox/auth/microsoft.js';
+
+const page = await context.newPage();
+const result = await microsoftLogin(page, {
+  email: 'user@university.ac.cr',
+  password: '...',
+});
+
+if (result.success) {
+  // page is now authenticated — scrape away!
+  await page.goto('https://office.com/...');
+}
+```
+
+### Pre-authenticated scraper
+
+```ts
+import { MicrosoftScraper } from 'nox';
+import type { Page } from 'playwright';
+
+class MyOfficeScraper extends MicrosoftScraper {
+  async extract(page: Page) {
+    const emails = await page.$$eval('.ms-email-item', els =>
+      els.map(el => el.textContent)
+    );
+    return { emails };
+  }
+}
+
+const scraper = new MyOfficeScraper({
+  email: 'user@university.ac.cr',
+  password: '...',
+  sessionName: 'office-session',  // auto-saves cookies
+});
+
+// First run: logs in + saves session
+// Subsequent runs: reuses saved session
+const result = await scraper.run({
+  urls: ['https://outlook.office.com/mail/'],
+});
+```
+
+### How it works
+
+1. Navigates to `login.microsoftonline.com`
+2. Enters email → MS detects federated domain
+3. Redirects to organization's SSO login page
+4. Enters password → submits
+5. Handles "Stay signed in?" prompt
+6. Returns authenticated page
+
+Works with: UFIDÉLITAS, UCR, UNA, TEC, and any Azure AD / O365 organization.
 
 ## Programmatic Usage
 
