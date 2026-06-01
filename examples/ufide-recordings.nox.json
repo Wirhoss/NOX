@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Wirhoss/NOX/main/schemas/nox-config.json",
+  "browser": {
+    "headless": true,
+    "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+  },
+  "jobs": [
+    {
+      "name": "list-recordings",
+      "urls": [
+        "https://ufidelitas.sharepoint.com/sites/sc5053fv12026bt_001/Documentos%20compartidos/General/Recordings/"
+      ],
+      "session": {
+        "load": "ufide-ms",
+        "save": "ufide-ms",
+        "loginUrl": "https://login.microsoftonline.com",
+        "login": [
+          {
+            "type": "type",
+            "selector": "input[type=\"email\"]",
+            "value": "${MS_EMAIL}"
+          },
+          { "type": "click", "selector": "input[type=\"submit\"]", "delay": 2000 },
+          {
+            "type": "type",
+            "selector": "input[type=\"password\"]",
+            "value": "${MS_PASSWORD}"
+          },
+          { "type": "click", "selector": "input[type=\"submit\"]", "delay": 3000 }
+        ]
+      },
+      "selectors": [
+        {
+          "name": "recordings",
+          "selector": "[role=\"row\"]",
+          "extract": "text",
+          "multiple": true
+        }
+      ],
+      "output": {
+        "dir": "./output",
+        "format": "json",
+        "pretty": true
+      }
+    }
+  ]
+}

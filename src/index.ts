@@ -44,3 +44,9 @@ export type { MicrosoftCredentials, MicrosoftLoginResult } from './auth/microsof
 
 // Pre-authenticated scrapers
 export { MicrosoftScraper } from './scrapers/microsoft.js';
+
+// SharePoint & Stream scrapers
+export { SharePointRecordingsScraper } from './scrapers/sharepoint.js';
+export type { RecordingEntry } from './scrapers/sharepoint.js';
+export { StreamTranscriptScraper } from './scrapers/stream.js';
+export type { TranscriptEntry } from './scrapers/stream.js';
