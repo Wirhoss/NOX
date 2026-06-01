@@ -1,0 +1,33 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Wirhoss/NOX/main/schemas/nox-config.json",
+  "browser": {
+    "headless": true,
+    "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+  },
+  "jobs": [
+    {
+      "name": "hackernews-titles",
+      "urls": ["https://news.ycombinator.com"],
+      "selectors": [
+        {
+          "name": "title",
+          "selector": ".titleline > a",
+          "extract": "text",
+          "multiple": true
+        },
+        {
+          "name": "link",
+          "selector": ".titleline > a",
+          "extract": "href",
+          "multiple": true
+        }
+      ],
+      "requestDelay": 2000
+    }
+  ],
+  "output": {
+    "dir": "./output",
+    "format": "json",
+    "pretty": true
+  }
+}

@@ -1,15 +1,46 @@
 import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import type { BrowserConfig } from '../config.js';
 
 /**
- * Manages the Playwright browser lifecycle.
- * Creates one browser instance and reuses it.
+ * Manages Playwright browser lifecycle.
+ * Supports local and remote (CDP/WebSocket) browsers.
  */
 
 let browser: Browser | null = null;
 
-export async function getBrowser(headless = true): Promise<Browser> {
+/**
+ * Launch a local Chromium browser.
+ */
+async function launchLocal(config: BrowserConfig): Promise<Browser> {
+  return chromium.launch({
+    headless: config.headless,
+    ...(config.executablePath ? { executablePath: config.executablePath } : {}),
+    args: config.args ?? [],
+  });
+}
+
+/**
+ * Connect to a remote browser via WebSocket (CDP).
+ * Examples:
+ *   - Browserless: ws://localhost:3000/playwright
+ *   - CDP endpoint: ws://1.2.3.4:9222/devtools/browser/<id>
+ */
+async function connectRemote(config: BrowserConfig): Promise<Browser> {
+  if (!config.wsEndpoint) {
+    throw new Error('BrowserConfig.wsEndpoint is required for remote connection');
+  }
+  return chromium.connect(config.wsEndpoint, {
+    ...(config.headers ? { headers: config.headers } : {}),
+  });
+}
+
+export async function getBrowser(config: BrowserConfig): Promise<Browser> {
   if (!browser || !browser.isConnected()) {
-    browser = await chromium.launch({ headless });
+    if (config.wsEndpoint) {
+      browser = await connectRemote(config);
+    } else {
+      browser = await launchLocal(config);
+    }
   }
   return browser;
 }

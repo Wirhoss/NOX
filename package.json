@@ -1,9 +1,24 @@
 {
   "name": "nox",
   "version": "1.0.0",
-  "type": "module",
-  "description": "NOX — Web data extraction with Playwright + TypeScript + Bun",
+  "author": "Wirhoss",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wirhoss/NOX.git"
+  },
   "main": "src/index.ts",
+  "devDependencies": {
+    "@types/joi": "^17.2.3",
+    "@types/node": "^25.9.1",
+    "typescript": "^6.0.3"
+  },
+  "bugs": {
+    "url": "https://github.com/Wirhoss/NOX/issues"
+  },
+  "description": "NOX — Web data extraction with Playwright + TypeScript + Bun",
+  "homepage": "https://github.com/Wirhoss/NOX#readme",
+  "keywords": ["playwright", "scraping", "typescript", "bun", "web-extraction"],
+  "license": "MIT",
   "scripts": {
     "dev": "bun run src/index.ts",
     "start": "bun run src/index.ts",
@@ -11,22 +26,9 @@
     "typecheck": "tsc --noEmit",
     "scrape": "bun run src/index.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Wirhoss/NOX.git"
-  },
-  "keywords": ["playwright", "scraping", "typescript", "bun", "web-extraction"],
-  "author": "Wirhoss",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Wirhoss/NOX/issues"
-  },
-  "homepage": "https://github.com/Wirhoss/NOX#readme",
+  "type": "module",
   "dependencies": {
-    "@playwright/test": "^1.60.0"
-  },
-  "devDependencies": {
-    "@types/node": "^25.9.1",
-    "typescript": "^6.0.3"
+    "joi": "^18.2.1",
+    "playwright": "^1.60.0"
   }
 }
