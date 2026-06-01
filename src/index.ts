@@ -50,3 +50,9 @@ export { SharePointRecordingsScraper } from './scrapers/sharepoint.js';
 export type { RecordingEntry } from './scrapers/sharepoint.js';
 export { StreamTranscriptScraper } from './scrapers/stream.js';
 export type { TranscriptEntry } from './scrapers/stream.js';
+
+// Course discovery & transcript scrapers
+export { CourseDiscoveryScraper } from './scrapers/course-discovery.js';
+export type { CourseSite } from './scrapers/course-discovery.js';
+export { CourseTranscriptScraper } from './scrapers/course-transcripts.js';
+export type { CourseRecording } from './scrapers/course-transcripts.js';
