@@ -2,32 +2,41 @@
  * Shared type definitions for NOX scrapers.
  */
 
+import type { ActionDef } from '../config/schema.js';
+
 /** A generic extracted data record */
 export interface ExtractedData {
-  /** Source URL */
   url: string;
-  /** When it was extracted */
   extractedAt: string;
-  /** Arbitrary key-value payload */
   payload: Record<string, unknown>;
+}
+
+/** Session configuration for a scrape run */
+export interface SessionConfig {
+  /** Load a previously saved session (cookies + localStorage) */
+  load?: string;
+  /** Save session after scraping under this name */
+  save?: string;
+  /** Run these login actions BEFORE scraping (only if no session loaded) */
+  login?: ActionDef[];
+  /** URL to navigate to before login actions */
+  loginUrl?: string;
 }
 
 /** Options passed to a scraper's run() method */
 export interface ScrapeOptions {
-  /** Target URL(s) */
   urls: string[];
-  /** Max concurrent pages (default: 1) */
   concurrency?: number;
-  /** Callback for each extracted item */
   onItem?: (data: ExtractedData) => void | Promise<void>;
+  /** Session management */
+  session?: SessionConfig;
+  /** Pre-scrape actions (applied to every URL) */
+  actions?: ActionDef[];
 }
 
 /** Result of a scrape run */
 export interface ScrapeResult {
-  /** Total items extracted */
   total: number;
-  /** Errors encountered */
   errors: Error[];
-  /** Duration in ms */
   durationMs: number;
 }

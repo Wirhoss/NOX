@@ -22,7 +22,18 @@ export type {
 } from './config/schema.js';
 
 // Types
-export type { ExtractedData, ScrapeOptions, ScrapeResult } from './types/index.js';
+export type {
+  ExtractedData,
+  ScrapeOptions,
+  ScrapeResult,
+  SessionConfig,
+} from './types/index.js';
 
 // Scrapers
 export { BaseScraper } from './scrapers/base.js';
+
+// Session management
+export { SessionManager, sessions } from './utils/session.js';
+
+// Actions
+export { executeActions } from './utils/actions.js';

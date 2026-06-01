@@ -48,25 +48,33 @@ const actionSchema = Joi.object({
   delay: Joi.number().integer().min(0).default(0),
 });
 
+// ── Session ────────────────────────────────────────────
+const sessionSchema = Joi.object({
+  /** Load a previously saved session */
+  load: Joi.string().optional(),
+  /** Save the session after scraping */
+  save: Joi.string().optional(),
+  /** Login actions to run before scraping */
+  login: Joi.array().items(actionSchema).optional(),
+  /** URL to navigate to before login */
+  loginUrl: Joi.string().uri().optional(),
+});
+
 // ── Job (one scrape task) ──────────────────────────────
 const jobSchema = Joi.object({
-  /** Unique job name */
   name: Joi.string().required(),
-  /** Target URL(s) */
   urls: Joi.array().items(Joi.string().uri()).min(1).required(),
-  /** Actions to perform before extraction */
+  /** Actions to perform before extraction (on every URL) */
   actions: Joi.array().items(actionSchema).default([]),
   /** What to extract */
   selectors: Joi.array().items(selectorSchema).min(1).required(),
-  /** Max concurrency (default: 1) */
+  /** Session config (load/save/login) */
+  session: sessionSchema.optional(),
   concurrency: Joi.number().integer().min(1).default(1),
-  /** Navigation timeout override (ms) */
   navigationTimeout: Joi.number().integer().min(1000).optional(),
-  /** Wait strategy */
   waitUntil: Joi.string()
     .valid('load', 'domcontentloaded', 'networkidle')
     .default('networkidle'),
-  /** Request delay between pages (ms) */
   requestDelay: Joi.number().integer().min(0).default(1000),
 });
 
@@ -109,6 +117,12 @@ export interface JobDef {
   urls: string[];
   actions: ActionDef[];
   selectors: SelectorDef[];
+  session?: {
+    load?: string;
+    save?: string;
+    login?: ActionDef[];
+    loginUrl?: string;
+  };
   concurrency: number;
   navigationTimeout?: number;
   waitUntil: 'load' | 'domcontentloaded' | 'networkidle';

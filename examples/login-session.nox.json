@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Wirhoss/NOX/main/schemas/nox-config.json",
+  "browser": {
+    "headless": false
+  },
+  "jobs": [
+    {
+      "name": "github-authenticated",
+      "urls": [
+        "https://github.com/settings/profile",
+        "https://github.com/settings/emails"
+      ],
+      "session": {
+        "load": "github",
+        "save": "github",
+        "loginUrl": "https://github.com/login",
+        "login": [
+          { "type": "type", "selector": "#login_field", "value": "your-username" },
+          { "type": "type", "selector": "#password", "value": "your-password" },
+          { "type": "click", "selector": "input[type=submit]" },
+          { "type": "wait", "value": 3000 }
+        ]
+      },
+      "selectors": [
+        {
+          "name": "profile-name",
+          "selector": ".p-name",
+          "extract": "text"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "dir": "./output",
+    "format": "json",
+    "pretty": true
+  }
+}
